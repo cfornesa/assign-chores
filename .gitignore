@@ -13,6 +13,7 @@ ENV/
 # Django local data
 db.sqlite3
 *.log
+questionnaire_answers.md
 
 # Test and tooling caches
 .pytest_cache/

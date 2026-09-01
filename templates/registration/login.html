@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in | Assign Chores</title>
+  </head>
+  <body>
+    <main>
+      <h1>Sign in to Assign Chores</h1>
+
+      {% if form.errors %}
+        <p role="alert">Your username and password did not match. Please try again.</p>
+      {% endif %}
+
+      {% if next %}
+        {% if user.is_authenticated %}
+          <p role="alert">Your account does not have access to that page.</p>
+        {% else %}
+          <p role="alert">Please sign in to continue.</p>
+        {% endif %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit">Sign in</button>
+      </form>
+    </main>
+  </body>
+</html>

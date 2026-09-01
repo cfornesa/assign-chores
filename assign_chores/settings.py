@@ -15,6 +15,13 @@ DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
 
 # Replit's preview proxy forwards requests using its own host.
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host.strip()}"
+    for variable in ("REPLIT_DEV_DOMAIN", "REPLIT_DOMAINS")
+    for host in os.environ.get(variable, "").split(",")
+    if host.strip()
+]
+CSRF_TRUSTED_ORIGINS.append("https://*.replit.dev")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -84,3 +91,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Django's built-in authentication views use these named routes.
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"

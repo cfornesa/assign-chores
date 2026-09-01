@@ -9,6 +9,20 @@
     <main>
       <h1>Assign Chores</h1>
       <p>Your Django app is ready for the next step.</p>
+
+      {% if user.is_authenticated %}
+        <section aria-labelledby="identity-heading">
+          <h2 id="identity-heading">Signed in</h2>
+          <p>
+            {{ user.get_full_name|default:user.username }}
+            {% if user.email %}({{ user.email }}){% endif %}
+          </p>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Sign out</button>
+          </form>
+        </section>
+      {% endif %}
     </main>
   </body>
 </html>

@@ -8,7 +8,7 @@
   <body>
     <main>
       <h1>Assign Chores</h1>
-      <p>Your Django app is ready for the next step.</p>
+      <p>Organize shared household work with the people you live with.</p>
 
       {% if user.is_authenticated %}
         <section aria-labelledby="identity-heading">
@@ -22,6 +22,44 @@
             <button type="submit">Sign out</button>
           </form>
         </section>
+
+        {% if messages %}
+          <ul aria-label="Messages">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <section aria-labelledby="households-heading">
+          <h2 id="households-heading">Your households</h2>
+          <p><a href="{% url 'household_create' %}">Create a household</a></p>
+
+          {% if approved_memberships %}
+            <ul>
+              {% for membership in approved_memberships %}
+                <li>
+                  <a href="{% url 'household_detail' membership.household.id %}">
+                    {{ membership.household.name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>You are not an approved member of a household yet.</p>
+          {% endif %}
+        </section>
+
+        {% if pending_memberships %}
+          <section aria-labelledby="pending-heading">
+            <h2 id="pending-heading">Pending requests</h2>
+            <ul>
+              {% for membership in pending_memberships %}
+                <li>{{ membership.household.name }} — waiting for approval</li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
       {% endif %}
     </main>
   </body>

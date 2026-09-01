@@ -23,3 +23,12 @@ To create a local user for development, run:
 python manage.py createsuperuser
 ```
 
+## Weekly scheduling policy
+
+The application uses the timezone configured by `TIME_ZONE` in
+`assign_chores/settings.py` (`America/Chicago` by default). A household week
+runs Sunday through Saturday. Weekly instances are generated idempotently when
+an approved member opens the household board, only for the current week. The
+selected weekday is due at the end of that local day; past and future weeks are
+not generated automatically.
+

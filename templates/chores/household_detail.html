@@ -1,0 +1,140 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ household.name }} | Assign Chores</title>
+  </head>
+  <body>
+    <main>
+      <p><a href="{% url 'home' %}">Back to home</a></p>
+      <h1>{{ household.name }}</h1>
+
+      {% if messages %}
+        <ul aria-label="Messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if invite_link %}
+        <section aria-labelledby="invite-heading">
+          <h2 id="invite-heading">Invite someone</h2>
+          <p>Share this reusable invite link with a household member:</p>
+          <p><a href="{{ invite_link }}">{{ invite_link }}</a></p>
+        </section>
+
+        <section aria-labelledby="requests-heading">
+          <h2 id="requests-heading">Pending requests</h2>
+          {% if pending_requests %}
+            <ul>
+              {% for membership in pending_requests %}
+                <li>
+                  {{ membership.user.get_full_name|default:membership.user.username }}
+                  <form
+                    method="post"
+                    action="{% url 'membership_decision' household.id membership.id 'approve' %}"
+                  >
+                    {% csrf_token %}
+                    <button type="submit">Approve</button>
+                  </form>
+                  <form
+                    method="post"
+                    action="{% url 'membership_decision' household.id membership.id 'reject' %}"
+                  >
+                    {% csrf_token %}
+                    <button type="submit">Reject</button>
+                  </form>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No pending requests.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      <section aria-labelledby="board-heading">
+        <h2 id="board-heading">Chore board</h2>
+        <p id="drag-help">
+          You can drag chores between supported lanes or use the buttons on each
+          card for the same actions.
+        </p>
+        <p>
+          <a href="{% url 'chore_create' household.id %}">Create a one-time chore</a>
+          ·
+          <a href="{% url 'weekly_chore_create' household.id %}">
+            Create a weekly chore
+          </a>
+        </p>
+
+        <section aria-labelledby="open-heading" data-drop-target="open">
+          <h3 id="open-heading">Open</h3>
+          {% if open_instances %}
+            <ul>
+              {% for chore in open_instances %}
+                <li>
+                  {% include "chores/_chore_card.html" with lane="open" %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No open chores yet.</p>
+          {% endif %}
+        </section>
+
+        <section aria-labelledby="mine-heading" data-drop-target="mine">
+          <h3 id="mine-heading">Mine</h3>
+          {% if mine_instances %}
+            <ul>
+              {% for chore in mine_instances %}
+                <li>
+                  {% include "chores/_chore_card.html" with lane="mine" %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No chores assigned to you.</p>
+          {% endif %}
+        </section>
+
+        <section
+          aria-labelledby="overdue-heading"
+          aria-disabled="true"
+          data-drop-target="overdue"
+        >
+          <h3 id="overdue-heading">Overdue</h3>
+          {% if overdue_instances %}
+            <ul>
+              {% for chore in overdue_instances %}
+                <li>
+                  {% include "chores/_chore_card.html" with lane="overdue" %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No overdue chores.</p>
+          {% endif %}
+        </section>
+
+        <section aria-labelledby="completed-heading" data-drop-target="completed">
+          <h3 id="completed-heading">Completed</h3>
+          {% if completed_instances %}
+            <ul>
+              {% for chore in completed_instances %}
+                <li>
+                  {% include "chores/_chore_card.html" with lane="completed" %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No chores completed this week.</p>
+          {% endif %}
+        </section>
+      </section>
+    </main>
+    <script src="{% static 'chores/board.js' %}"></script>
+  </body>
+</html>

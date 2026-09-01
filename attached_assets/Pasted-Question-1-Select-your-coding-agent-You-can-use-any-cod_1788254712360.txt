@@ -1,0 +1,65 @@
+Question 1: Select your coding agent
+You can use any coding agent you want. Which one did you choose?
+
+Question 2: Turn the idea into a spec
+Open a chat assistant and brainstorm with a prompt like:
+
+I want to build a tool for managing shared household chores.
+
+Help me set the scope for this project precisely. I want to brainstorm with you
+and understand how the tool should work. Give me options.
+
+Ask me one question at a time and keep your output short.
+Answer its questions, then ask it to save everything to a markdown file.
+
+What are the 2-4 features your spec settled on?
+
+GitHub Repository
+Create an empty GitHub repository, clone it locally. Create two files there:
+
+.gitignore
+README.md
+_docs/plan.md with the plan
+Commit and push.
+
+Question 3: Django project
+For this project we'll use Django.
+
+Ask your agent to install Django and create a project and an app for it. At some point, you will need to include the app you created in the project.
+
+What's the file you need to edit for that?
+
+settings.py
+manage.py
+urls.py
+wsgi.py
+For this and next questions you can ask your coding assistant to select the correct option.
+
+Question 4: Backlog
+Then give your agent the plan.md and ask it to propose a small backlog of tasks for building this in Django. Write the result to backlog.md.
+
+What's task 1 in the backlog your agent came up with?
+
+Question 5: First version
+Implement the first few tasks. Just open your agent and say:
+
+Implement task #1 from backlog.md
+Run the server. Which command do you use to start the Django development server?
+
+uv run python manage.py runserver
+uv run django-admin startserver
+python manage.py start
+uv run python app.py runserver
+Question 6: Tests
+After implementing a few items from the backlog, let's make sure the code is covered with tests.
+
+Tell the agent we want to cover the code with tests
+Ask it which scenarios we should cover
+Make sure they make sense
+Let it implement them and run them
+What's the command you use for running tests in the terminal?
+
+pytest
+python manage.py test
+python -m django run_tests
+django-admin test

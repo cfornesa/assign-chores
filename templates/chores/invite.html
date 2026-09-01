@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Household invitation | Assign Chores</title>
+  </head>
+  <body>
+    <main>
+      <p><a href="{% url 'home' %}">Back to home</a></p>
+      <h1>Household invitation</h1>
+
+      {% if messages %}
+        <ul aria-label="Messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if membership and membership.status == "pending" %}
+        <p>Your request is waiting for the household owner to approve it.</p>
+      {% elif membership and membership.status == "rejected" %}
+        <p>Your previous request was rejected. You can request access again.</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit">Request access again</button>
+        </form>
+      {% else %}
+        <p>Request access to this private household.</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit">Request access</button>
+        </form>
+      {% endif %}
+    </main>
+  </body>
+</html>

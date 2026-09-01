@@ -1,0 +1,139 @@
+<article
+  data-chore-id="{{ chore.id }}"
+  data-assignment-status="{{ chore.assignment_status }}"
+  data-assigned-to-current="{% if chore.assigned_to_id == user.id %}true{% else %}false{% endif %}"
+  {% if chore.status == "open" %}
+    draggable="true"
+    aria-describedby="drag-help"
+    data-claim-url="{% url 'assignment_action' household.id chore.id 'claim' %}"
+    data-unclaim-url="{% url 'assignment_action' household.id chore.id 'unclaim' %}"
+    data-complete-url="{% url 'chore_complete' household.id chore.id %}"
+    data-completion-needs-confirmation="{% if chore.assigned_to_id and chore.assigned_to_id != user.id %}true{% else %}false{% endif %}"
+  {% endif %}
+>
+  <h4>{{ chore.title_snapshot }}</h4>
+  {% if chore.description_snapshot %}
+    <p>{{ chore.description_snapshot }}</p>
+  {% endif %}
+  <p>
+    {% if chore.due_at %}
+      Due {{ chore.due_at|date:"M j, Y, g:i a" }}
+    {% else %}
+      No due date
+    {% endif %}
+  </p>
+  {% if chore.is_overdue %}
+    <p><strong>Overdue</strong></p>
+  {% endif %}
+  <p>
+    Assignment:
+    {% if chore.assignment_status == "pending" %}
+      Pending: {{ chore.assigned_to.get_full_name|default:chore.assigned_to.username }}
+    {% elif chore.assignment_status == "accepted" %}
+      Accepted: {{ chore.assigned_to.get_full_name|default:chore.assigned_to.username }}
+    {% else %}
+      Unassigned
+    {% endif %}
+  </p>
+
+  {% if chore.status == "completed" %}
+    <p>
+      Completed by
+      {{ chore.completed_by.get_full_name|default:chore.completed_by.username }}
+      on {{ chore.completed_at|date:"M j, Y, g:i a" }}
+    </p>
+  {% elif chore.assignment_status == "unassigned" %}
+    <form
+      method="post"
+      action="{% url 'assignment_action' household.id chore.id 'claim' %}"
+    >
+      {% csrf_token %}
+      <button type="submit">Claim</button>
+    </form>
+    <form method="post" action="{% url 'chore_assign' household.id chore.id %}">
+      {% csrf_token %}
+      <label for="assignee-{{ lane }}-{{ chore.id }}">Assign to</label>
+      <select id="assignee-{{ lane }}-{{ chore.id }}" name="assignee" required>
+        <option value="">Choose a member</option>
+        {% for member in approved_members %}
+          {% if member.user_id != user.id %}
+            <option value="{{ member.user_id }}">
+              {{ member.user.get_full_name|default:member.user.username }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button type="submit">Propose assignment</button>
+    </form>
+  {% elif chore.assignment_status == "pending" and chore.assigned_to_id == user.id %}
+    <form
+      method="post"
+      action="{% url 'assignment_action' household.id chore.id 'accept' %}"
+    >
+      {% csrf_token %}
+      <button type="submit">Accept</button>
+    </form>
+    <form
+      method="post"
+      action="{% url 'assignment_action' household.id chore.id 'decline' %}"
+    >
+      {% csrf_token %}
+      <button type="submit">Decline</button>
+    </form>
+  {% elif chore.assignment_status == "accepted" %}
+    {% if chore.assigned_to_id == user.id %}
+      <form
+        method="post"
+        action="{% url 'assignment_action' household.id chore.id 'unclaim' %}"
+      >
+        {% csrf_token %}
+        <button type="submit">Unclaim</button>
+      </form>
+    {% endif %}
+    <form method="post" action="{% url 'chore_assign' household.id chore.id %}">
+      {% csrf_token %}
+      <label for="reassignee-{{ lane }}-{{ chore.id }}">Reassign to</label>
+      <select id="reassignee-{{ lane }}-{{ chore.id }}" name="assignee" required>
+        <option value="">Choose a member</option>
+        {% for member in approved_members %}
+          {% if member.user_id != chore.assigned_to_id %}
+            <option value="{{ member.user_id }}">
+              {{ member.user.get_full_name|default:member.user.username }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <label>
+        <input type="checkbox" name="confirm" value="yes" required>
+        Confirm reassignment
+      </label>
+      <button type="submit">Reassign</button>
+    </form>
+  {% endif %}
+
+  {% if chore.status == "open" %}
+    <form
+      method="post"
+      action="{% url 'chore_complete' household.id chore.id %}"
+    >
+      {% csrf_token %}
+      {% if chore.assigned_to_id and chore.assigned_to_id != user.id %}
+        <label>
+          <input type="checkbox" name="confirm" value="yes" required>
+          Confirm completion for {{ chore.assigned_to.username }}
+        </label>
+      {% endif %}
+      <button type="submit">Complete</button>
+    </form>
+    <p>
+      <a href="{% url 'chore_edit' household.id chore.template_id %}">Edit</a>
+    </p>
+    <form
+      method="post"
+      action="{% url 'chore_delete' household.id chore.template_id %}"
+    >
+      {% csrf_token %}
+      <button type="submit">Delete</button>
+    </form>
+  {% endif %}
+</article>

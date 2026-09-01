@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "x8l9zUoQFV1jTnu6VWE2G"
+uri = "file://questionnaire_answers.md"
+type = "text"
+title = "Questionnaire Answers"
+description = "Answers to all six questions based on the completed Assign Chores project steps."
+logical_id = "8e60fe95-d665-4570-adff-b4dcfac15cf3"
+content_hash = "sha256:33794efbf994a5c85f8312c8dae8a19be153c6ca30e1c83a819b52998050dd2b"
+size = 833
+mtime_ms = 1788255427185
+storage_uri = "gcs://replit-rams-assets-janeway/rams/assets/repl:230f220e-61ad-4a25-b3c9-50fdbdcd9e5a/8e60fe95-d665-4570-adff-b4dcfac15cf3/79f16c66-a8ee-4824-b909-0c50d74900a4"
+storage_version_token = "1788255433334709"
+content_type = "text/markdown"
